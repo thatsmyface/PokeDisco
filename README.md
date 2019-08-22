@@ -1,7 +1,7 @@
 # PokeDisco
 a pokemon discord bot written in node.js. developed to be easily transplanted to the source code of another node discord bot.
 
-## Goals
+## Features (soon)
 - [ ] Nice looking embeds for Pokemon
 - [ ] Every 60-200 minutes a Pokemon "spawns" in a config-provided channel
   - spawned pokemon has random level, ID, and species
