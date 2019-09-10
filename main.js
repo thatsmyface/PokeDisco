@@ -1,8 +1,10 @@
 //test with multiple users catching
+//add catch date
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var fs = require("fs");
+var fixedWidthString = require("fixed-width-string");
 
 const pConfig = require("./pokemon_config.json");
 const dex = require("./dex.json");
@@ -36,6 +38,44 @@ client.on('message', message => {
 
         if (command === "catch"){
             attemptCatch(message, currentMon)
+        }
+        else if (command === "dex"){
+            var pageNum = 1;
+            
+            if(!isNaN(parseInt(args[0]))){
+                pageNum = parseInt(args[0]);
+            }
+            
+            var textToSend;
+
+            if (trainers[message.author.id]){
+                var speciesFound = [];
+                trainers[message.author.id].mons.forEach(function (mon){
+                    if (!speciesFound.includes(mons[mon].id)){
+                        speciesFound.push(mons[mon].id);
+                    }
+                });
+
+                var pageCount = Math.ceil((trainers[message.author.id].mons.length/10));
+
+                textToSend = `**Your Pokédex**\n*${speciesFound.length}/${dex.length} species caught (${((speciesFound.length/dex.length)*100).toFixed(2)}%)*\n`;
+                
+                trainers[message.author.id].mons.forEach(function (mid, index){
+                    if (index+1 > 10*pageNum) return;
+
+                    if (index >= 10*(pageNum-1)){
+                        mon = mons[mid];
+                        var description = "**"+mon.name+"** (Lv. "+mon.level+")";
+                        textToSend+="\n"+fixedWidthString("`"+mid+"`", 12)+description;
+                    }
+                });
+
+                textToSend += `\n\nPage ${pageNum}/${pageCount}`;
+                if (pageCount > pageNum) textToSend += " - to view the next page type `noc dex "+(pageNum+1)+"`";
+            }
+            else textToSend = "You have not caught any Pokémon.";
+
+            message.channel.send(textToSend);
         }
     }
 });
@@ -72,7 +112,7 @@ function spawnMon(){
 
     if (currentMon.catchChance > 1) currentMon.catchChance = 1;
 
-    currentMon.imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+currentMon.name.toLowerCase().replace("-","")+".gif";
+    currentMon.imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+currentMon.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
 
     console.log(currentMon.name+" (Lv "+currentMon.level+") spawned.");
 
@@ -180,7 +220,7 @@ function testCatch(mon, message){
         gennedMon.owner = message.author.id;
         mons[mid] = gennedMon;
 
-        trainers[message.author.id].mons.push(mid);
+        trainers[message.author.id].mons.unshift(mid);
         trainers[message.author.id].spawnIds.push(mon.spawnId);
         trainers[message.author.id].currentBalls = pConfig.numberOfAttempts;
     }
