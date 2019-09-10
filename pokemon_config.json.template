@@ -1,0 +1,15 @@
+{
+    "token":"your-discord-api-token",
+    "prefix": "poke",
+    "spawnChannel": "channelIDtospawnpokemonin",
+    "requireCatchingInSpawnChannel": true,
+    "catchDifficulty": 15,
+    "numberOfAttempts": 3,
+    "animatedCatch": true,
+    "animationShakeTime": 1500,
+    "animationAmountShakes": 5,
+    "maxRunTime": 20,
+    "minRunTime": 11,
+    "maxSpawnTime": 100,
+    "minSpawnTime": 30
+}
