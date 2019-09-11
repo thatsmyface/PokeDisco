@@ -20,7 +20,7 @@ var spawns = require("./spawns.json");
 client.once('ready', () => {
     console.log('Ready!');
     server = client.guilds.keys().next().value;
-    spawnMon();
+    setupSpawn();
 });
 
 client.on('message', message => {
@@ -67,9 +67,14 @@ client.on('message', message => {
 
                     if (index >= 10*(pageNum-1)){
                         mon = mons[mid];
+
+                        var showName;
+                        if (!mon.shiny) showName = mon.name;
+                        else showName = "Shiny "+mon.name;
+
                         var description;
-                        if (mon.nickname.length > 0) description = "**"+mon.nickname+"** - "+mon.name+" (Lv. "+mon.level+")";
-                        else description = "**"+mon.name+"** (Lv. "+mon.level+")";
+                        if (mon.nickname.length > 0) description = "**"+mon.nickname+"** - "+showName+" (Lv. "+mon.level+")";
+                        else description = "**"+showName+"** (Lv. "+mon.level+")";
                         textToSend+="\n"+fixedWidthString("`"+mid+"`", 12)+description;
                     }
                 });
@@ -157,14 +162,25 @@ client.on('message', message => {
 
                         var preferredName;
                         if (found.nickname.length > 0) preferredName = found.nickname;
-                        else preferredName = found.name;
+                        else {
+                           if (!found.shiny) preferredName = found.name;
+                           else preferredName = "Shiny "+found.name;
+                        }
+                        if (!found.shiny) imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+found.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
+                        else imgUrl = "https://play.pokemonshowdown.com/sprites/xyani-shiny/"+found.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
 
-                        const imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+found.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
+                        var desc;
+                        if (!found.shiny) desc = `**Level ${found.level}**\n\nA level ${found.level} ${found.name} caught on ${found.catchTime}\n\n\`${correctID}\``;
+                        else desc = `**Level ${found.level}**\n\nA **shiny** level ${found.level} ${found.name} caught on ${found.catchTime}\n\n\`${correctID}\``;
+
+                        var color;
+                        if (!found.shiny) color = 16312092;
+                        else color = 12390624;
 
                         const embed = {
                             "title": preferredName,
-                            "description": `**Level ${found.level}**\n\nA Level ${found.level} ${found.name} caught by you on ${found.catchTime}\n\n\`${correctID}\``,
-                            "color": 16312092,
+                            "description": desc,
+                            "color": color,
                         
                             "thumbnail": {
                               "url": imgUrl
@@ -213,16 +229,33 @@ function spawnMon(){
     spawns.push(currentMon.spawnId);
     updatePoke();
 
+    if (Math.random() < pConfig.shinyChance){
+        currentMon.shiny = true;
+    }
+
     if (currentMon.catchChance > 1) currentMon.catchChance = 1;
 
-    currentMon.imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+currentMon.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
-
+    if (!currentMon.shiny) currentMon.imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+currentMon.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
+    else currentMon.imgUrl = "https://play.pokemonshowdown.com/sprites/xyani-shiny/"+currentMon.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
+    
     console.log(currentMon.name+" (Lv "+currentMon.level+") spawned.");
 
+    var desc;
+    if (!currentMon.shiny) desc = `A wild ${currentMon.name} has appeared!`;
+    else desc = `A **shiny** wild ${currentMon.name} has appeared!`;
+
+    var color;
+    if (!currentMon.shiny) color = 16312092;
+    else color = 12390624;
+
+    var showName;
+    if (!currentMon.shiny) showName = currentMon.name;
+    else showName = "Shiny "+currentMon.name;
+
     const embed = {
-        "title": `${currentMon.name} (Lv. ${currentMon.level})`,
-        "description": `A wild ${currentMon.name} has appeared!`,
-        "color": 16312092,
+        "title": `${showName} (Lv. ${currentMon.level})`,
+        "description": desc,
+        "color": color,
     
         "thumbnail": {
           "url": currentMon.imgUrl
