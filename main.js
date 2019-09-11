@@ -1,10 +1,11 @@
 //test with multiple users catching
-//add catch date
+//embed for show (include catch time, level, id, owner, nickname, pic)
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 var fs = require("fs");
 var fixedWidthString = require("fixed-width-string");
+var dateFormat = require('dateformat');
 
 const pConfig = require("./pokemon_config.json");
 const dex = require("./dex.json");
@@ -65,7 +66,9 @@ client.on('message', message => {
 
                     if (index >= 10*(pageNum-1)){
                         mon = mons[mid];
-                        var description = "**"+mon.name+"** (Lv. "+mon.level+")";
+                        var description;
+                        if (mon.nickname.length > 0) description = "**"+mon.nickname+"** - "+mon.name+" (Lv. "+mon.level+")";
+                        else description = "**"+mon.name+"** (Lv. "+mon.level+")";
                         textToSend+="\n"+fixedWidthString("`"+mid+"`", 12)+description;
                     }
                 });
@@ -76,6 +79,38 @@ client.on('message', message => {
             else textToSend = "You have not caught any Pokémon.";
 
             message.channel.send(textToSend);
+        }
+        else if (command === "nickname"){
+            if (trainers[message.author.id]){
+                if (args[0]){
+                    var found = false;
+                    if (!isNaN(parseInt(args[0]))){
+                        trainers[message.author.id].mons.forEach(function (mon, index){
+                            if (mon == parseInt(args[0])){
+                                found = true;
+                                return;
+                            }
+                        });
+                    }
+                    
+                    if (found){
+                        var correctID = parseInt(args[0]);
+                        args.shift();
+                        const restOf = args.join(" ");
+                        if (restOf){
+                            mons[correctID].nickname = restOf;
+                            updatePoke();
+                            message.reply(`${mons[correctID].name}'s new nickname is "${mons[correctID].nickname}"`);
+                        }else{
+                            message.reply("please include the nickname you'd like to set. For example `"+pConfig.prefix+" nickname "+correctID+" Bobby`");
+                        }
+                    }else{
+                        message.reply("you do not have a Pokémon with the ID `"+args[0]+"`");
+                    }
+                }
+                else message.reply("please include the id of the Pokémon you'd like to nickname. For example `"+pConfig.prefix+" nickname "+trainers[message.author.id].mons[0]+" Bobby`");
+            }
+            else message.reply("you have not caught any Pokémon.");
         }
     }
 });
@@ -207,7 +242,7 @@ function updateAnimation(sentId, shakesLeft, message, mon){
 function testCatch(mon, message){
     const randGen = Math.random();
     if (randGen < mon.catchChance){
-        message.reply(`congratulations! You caught ${mon.name}!`);
+        
         console.log(`${message.author.username} caught ${mon.name}`);
 
         var mid = Math.floor(Math.random() * Math.floor(9999999-999999)) + 999999;
@@ -215,9 +250,14 @@ function testCatch(mon, message){
             mid = Math.floor(Math.random() * Math.floor(9999999-999999)) + 999999;
         }
 
+        message.reply(`congratulations! You caught ${mon.name}!\nIf you'd like to give it a nickname type \`${pConfig.prefix} nickname ${mid} [nickname]\``);
+
         gennedMon = mon;
         delete gennedMon["imgUrl"];
         gennedMon.owner = message.author.id;
+        gennedMon.catchTime = dateFormat("mm/dd/yyyy h:MM TT");
+        gennedMon.nickname = "";
+
         mons[mid] = gennedMon;
 
         trainers[message.author.id].mons.unshift(mid);

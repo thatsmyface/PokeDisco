@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/thatsmyface/PokeDisco#readme",
   "dependencies": {
+    "dateformat": "^3.0.3",
     "discord.js": "^11.5.1",
     "fixed-width-string": "^1.0.0"
   }
