@@ -5,8 +5,8 @@ a pokemon discord bot written in node.js. developed to be easily transplanted to
 - [x] Nice looking embeds for Pokemon
 - [x] After a random time a Pokemon "spawns" in a config-provided channel
   - [x] spawned pokemon has random level, ID, and species
-  - [ ] has a chance to be shiny
-  - [ ] limit which hours can spawn pokemon
+  - [x] has a chance to be shiny
+  - [x] ability to limit which hours can spawn pokemon
   - [x] different catch chance depending on level (will be displayed to chatters)
   - [x] multiple chances to catch per person
 - [x] Pokemon "runs away"(no longer catchable) after random time
@@ -26,8 +26,12 @@ a pokemon discord bot written in node.js. developed to be easily transplanted to
 - **requireCatchingInSpawnChannel** - restrict catching to the spawn channel only
 - **catchDifficulty** - higher number = higher catch chance (15 is the best)
 - **numberOfAttempts** - amount of pokeballs that can be thrown by each user at each pokemon
+- **shinyChance** - the chance that a spawned pokemon will be shiny
 - **animatedCatch** - enable animated catches (if you have problems disable this)
 - **animationShakeTime** - time in milliseconds of each shake when animation is enabled
 - **animationAmountShakes** - amount of shakes when catching when animation is enabled
 - **maxRunTime** / **minRunTime** - the range for how long until a pokemon is no longer catchable
 - **maxSpawnTime** / **minSpawnTime** - the range for how long until a pokemon spawns after the last pokemon ran away
+- **limitSpawnTimes** - restrict the times that 'mons can spawn
+- **hourEnableSpawns** / **hourDisableSpawns** - the range for when 'mons will spawn when limitSpawnTimes is enabled
+- **enableWeekendSpawns** - should pokemon spawn when limitSpawnTimes is enabled?

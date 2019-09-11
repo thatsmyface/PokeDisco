@@ -5,11 +5,16 @@
     "requireCatchingInSpawnChannel": true,
     "catchDifficulty": 15,
     "numberOfAttempts": 3,
+    "shinyChance": 0.005,
     "animatedCatch": true,
     "animationShakeTime": 1500,
     "animationAmountShakes": 5,
     "maxRunTime": 20,
     "minRunTime": 11,
     "maxSpawnTime": 100,
-    "minSpawnTime": 30
+    "minSpawnTime": 30,
+    "limitSpawnTimes": true,
+    "hourEnableSpawns": 7,
+    "hourDisableSpawns": 17,
+    "enableWeekendSpawns": false
 }

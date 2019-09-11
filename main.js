@@ -1,12 +1,10 @@
-//test with multiple users catching
-//embed for show (include catch time, level, id, owner, nickname, pic)
-
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
 var fs = require("fs");
 var fixedWidthString = require("fixed-width-string");
 var dateFormat = require('dateformat');
+var schedule = require('node-schedule');
 
 const pConfig = require("./pokemon_config.json");
 const dex = require("./dex.json");
@@ -16,6 +14,9 @@ const trainers = require("./trainers.json");
 
 var currentMon = null;
 var spawns = require("./spawns.json");
+
+var spawnsEnabled = true;
+checkHour();
 
 client.once('ready', () => {
     console.log('Ready!');
@@ -202,9 +203,11 @@ client.on('message', message => {
 client.login(pConfig.token);
 
 function setupSpawn(){
-    const spawnTime = Math.floor(Math.random() * Math.floor(1000*60*(pConfig.maxSpawnTime-pConfig.minSpawnTime))) + 1000*60*pConfig.minSpawnTime;
-    console.log("New 'mon will spawn in "+(spawnTime/1000/60).toFixed(2)+" minutes.");
-    setTimeout(spawnMon, spawnTime);
+    if (spawnsEnabled) {
+        const spawnTime = Math.floor(Math.random() * Math.floor(1000*60*(pConfig.maxSpawnTime-pConfig.minSpawnTime))) + 1000*60*pConfig.minSpawnTime;
+        console.log("New 'mon will spawn in "+(spawnTime/1000/60).toFixed(2)+" minutes.");
+        setTimeout(spawnMon, spawnTime);
+    }
 }
 
 function spawnMon(){
@@ -383,3 +386,25 @@ function updatePoke() {
         if (err) throw err;
     });
 }
+
+function checkHour(){
+    if (pConfig.limitSpawnTimes){
+        var now = new Date();
+        var dayOfWeek = now.getDay();
+        if(dayOfWeek > 0 && dayOfWeek < 6){
+            //falls on a weekday
+            if (now.getHours() >= pConfig.hourEnableSpawns && now.getHours() < pConfig.hourDisableSpawns) {
+                //it's in schedule
+                spawnsEnabled = true;
+            }
+            else spawnsEnabled = false;
+        }
+        else {
+            if (!pConfig.enableWeekendSpawns) spawnsEnabled = false;
+        }
+    }
+}
+
+var scheduleHourCheck = schedule.scheduleJob('0 * * * *', function(){
+    checkHour();
+});
