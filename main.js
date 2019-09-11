@@ -3,6 +3,7 @@
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
+
 var fs = require("fs");
 var fixedWidthString = require("fixed-width-string");
 var dateFormat = require('dateformat');
@@ -109,6 +110,73 @@ client.on('message', message => {
                     }
                 }
                 else message.reply("please include the id of the Pokémon you'd like to nickname. For example `"+pConfig.prefix+" nickname "+trainers[message.author.id].mons[0]+" Bobby`");
+            }
+            else message.reply("you have not caught any Pokémon.");
+        }
+        else if (command === "show"){
+            if (trainers[message.author.id]){
+                const given = args.join(" ");
+                if (given){   //either nickname or id or species
+                    var found = false;
+                    var correctID;
+
+                    if (!isNaN(parseInt(given))){     //check if an id was given
+                        trainers[message.author.id].mons.forEach(function (mon, index){
+                            if (mon == parseInt(given)){
+                                found = true;
+                                correctID = parseInt(given);
+                                return;
+                            }
+                        });
+                    }
+                    
+                    if (!found){    //check if a nickname was given
+                        trainers[message.author.id].mons.forEach(function (mon, index){
+                            monData = mons[mon];
+                            if (monData.nickname === given){
+                                found = true;
+                                correctID = mon;
+                                return;
+                            }
+                        });
+                    }
+
+                    if (!found){    //check if a species was given
+                        trainers[message.author.id].mons.forEach(function (mon, index){
+                            monData = mons[mon];
+                            if (monData.name.toLowerCase() === given.toLowerCase()){
+                                found = true;
+                                correctID = mon;
+                                return;
+                            }
+                        });
+                    }
+
+                    if (found){
+                        const found = mons[correctID];
+
+                        var preferredName;
+                        if (found.nickname.length > 0) preferredName = found.nickname;
+                        else preferredName = found.name;
+
+                        const imgUrl = "https://play.pokemonshowdown.com/sprites/xyani/"+found.name.toLowerCase().replace("-","").replace(".","").replace(" ","")+".gif";
+
+                        const embed = {
+                            "title": preferredName,
+                            "description": `**Level ${found.level}**\n\nA Level ${found.level} ${found.name} caught by you on ${found.catchTime}\n\n\`${correctID}\``,
+                            "color": 16312092,
+                        
+                            "thumbnail": {
+                              "url": imgUrl
+                            }
+                        };
+                    
+                        message.channel.send({ embed });
+                    }else{
+                        message.reply("you do not have a Pokémon with the ID, nickname, or species `"+args[0]+"`");
+                    }
+                }
+                else message.reply("please include the id, nickname, or species of the Pokémon you'd like to show. For example `"+pConfig.prefix+" show "+trainers[message.author.id].mons[0]+"`");
             }
             else message.reply("you have not caught any Pokémon.");
         }

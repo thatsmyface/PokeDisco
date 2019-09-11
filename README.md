@@ -12,11 +12,10 @@ a pokemon discord bot written in node.js. developed to be easily transplanted to
 - [x] Pokemon "runs away"(no longer catchable) after random time
 - [x] ". . ." catching animation shown in chat using edited messages
 - [x] 'catch' command to attempt catch
-- [ ] 'show <nickname/id/species>' command to display rich embed of the pokemon in chat
-  - if the species identifier is used: will show the highest level catch
-  - no duplicate nicknames allowed
+- [x] 'show <nickname/id/species>' command to display rich embed of the pokemon in chat
+  - if the species identifier is used: will show the most recently caught
 - [x] 'dex' command shows pages of caught pokemon with nickname, species, level, and id
-- [ ] 'nickname <id> <nickname>' command allows a nickname to be set
+- [x] 'nickname <id> <nickname>' command allows a nickname to be set
 - [ ] 'leaderboard' command for displaying chatters with most species caught
 - [ ] trading
   
