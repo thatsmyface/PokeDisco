@@ -7,7 +7,7 @@
     "numberOfAttempts": 3,
     "shinyChance": 0.005,
     "animatedCatch": true,
-    "animationShakeTime": 1500,
+    "animationShakeTime": 1000,
     "animationAmountShakes": 5,
     "maxRunTime": 20,
     "minRunTime": 11,

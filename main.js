@@ -32,12 +32,12 @@ client.on('message', message => {
         const command = args.shift().toLowerCase();
 
         //dev commands only
-        if (command === "spawn") {
-            spawnMon();
-        }
-        else if (command === "despawn") {
-            despawnMon();
-        }
+        // if (command === "spawn") {
+        //     spawnMon();
+        // }
+        // else if (command === "despawn") {
+        //     despawnMon();
+        // }
 
         if (command === "catch"){
             attemptCatch(message, currentMon)
